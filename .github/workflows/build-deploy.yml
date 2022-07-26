@@ -38,6 +38,7 @@ jobs:
         with:
           inlineScript: |
             .\src\ps\app-service-deploy.ps1
+          azPSVersion: latest
 
   # This workflow contains a single job called "build"
   build:
