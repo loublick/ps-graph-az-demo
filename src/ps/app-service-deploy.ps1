@@ -1,8 +1,14 @@
 # Replace the following URL with a public GitHub repo URL
 #$gitrepo="https://github.com/Azure-Samples/app-service-web-dotnet-get-started.git"
+$subscriptionId=$SubscriptionId
+$tenantId=$TenantId
 $webappname="mywebapp$(Get-Random)"
 $location="East US"
 $resourceGroupName="rg-ps-graph-az-demo"
+
+# Set the Azure context
+#Set-AzContext -Subscription "38f49f24-d0b7-461a-9801-85c65fc65628" -Force
+#Set-AzContext -Tenant "8df4579d-a09d-4eae-828e-42f483ca5f70" -Force
 
 # Create a resource group.
 New-AzResourceGroup -Name $resourceGroupName -Location $location
@@ -12,11 +18,3 @@ New-AzAppServicePlan -Name $webappname -Location $location -ResourceGroupName $r
 
 # Create a web app.
 New-AzWebApp -Name $webappname -Location $location -AppServicePlan $webappname -ResourceGroupName $resourceGroupName
-
-# Configure GitHub deployment from your GitHub repo and deploy once.
-#$PropertiesObject = @{
-#    repoUrl = "$gitrepo";
-#    branch = "master";
-#    isManualIntegration = "true";
-#}
-#Set-AzResource -Properties $PropertiesObject -ResourceGroupName myResourceGroup -ResourceType Microsoft.Web/sites/sourcecontrols -ResourceName $webappname/web -ApiVersion 2015-08-01 -Force
