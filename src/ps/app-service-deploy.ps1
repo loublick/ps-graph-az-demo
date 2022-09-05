@@ -1,20 +1,41 @@
-# Replace the following URL with a public GitHub repo URL
-#$gitrepo="https://github.com/Azure-Samples/app-service-web-dotnet-get-started.git"
-$subscriptionId=$SubscriptionId
-$tenantId=$TenantId
-$webappname="mywebapp$(Get-Random)"
-$location="East US"
-$resourceGroupName="rg-ps-graph-az-demo"
+#
+# Read parameters from command line and environment.
+#
+$subId = $subscriptionId
+$tenId = $TenantId
+$appSrvPlanName = "asp-ps-graph-az-demo"
+$webAppName = "webapp-ps-graph-az-demo"
+$location = "East US"
+$resGroupName = "rg-ps-graph-az-demo"
 
 # Set the Azure context
-#Set-AzContext -Subscription "38f49f24-d0b7-461a-9801-85c65fc65628" -Force
-#Set-AzContext -Tenant "8df4579d-a09d-4eae-828e-42f483ca5f70" -Force
+Set-AzContext -Subscription $subId -Tenant $tenId -Force
 
 # Create a resource group.
-New-AzResourceGroup -Name $resourceGroupName -Location $location
+$resGroup = Get-AzResourceGroup -Name $resGroupName -ErrorAction SilentlyContinue
+if ($null -ne $resGroup) {
+    Write-Host "Update existing resource group - $resGroupName"
+} Else {
+    Write-Host "Create resource group - $resGroupName"
+    New-AzResourceGroup -Name $resGroupName -Location $location
+}
+
 
 # Create an App Service plan in Free tier.
-New-AzAppServicePlan -Name $webappname -Location $location -ResourceGroupName $resourceGroupName -Tier Free
+$appSrvPlan = Get-AzAppServicePlan -ResourceGroupName $resGroupName -Name $appSrvPlanName -ErrorAction SilentlyContinue
+if ($null -ne $appSrvPlan) {
+    Write-Host "Update existing App Service Plan - $appSrvPlanName"
+} Else {
+    Write-Host "Create App Service Plan - $appSrvPlanName"
+    New-AzAppServicePlan -name $appSrvPlanName -Location $location -ResourceGroupName $resGroupName -Tier Free
+}
+
 
 # Create a web app.
-New-AzWebApp -Name $webappname -Location $location -AppServicePlan $webappname -ResourceGroupName $resourceGroupName
+$webApp = Get-AzWebApp -ResourceGroupName $resGroupName -Name $webAppName -ErrorAction SilentlyContinue
+if ($null -ne $webApp) {
+    Write-Host "Update existing App Service - $webAppName"
+} Else {
+    Write-Host "Create App Service - $webAppName"
+    New-AzWebApp -Name $webAppName -Location $location -AppServicePlan $appSrvPlanName -ResourceGroupName $resGroupName
+}
